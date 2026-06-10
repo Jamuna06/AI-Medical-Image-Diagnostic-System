@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedAI Core | Diagnostic Research Ledger</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-main: #030712;
+            --glass-bg: rgba(15, 23, 42, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --neon-blue: #38bdf8;
+            --neon-purple: #a855f7;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+        }
+
+        body {
+            background: radial-gradient(circle at 50% 0%, #1a103c 0%, var(--bg-main) 70%);
+            color: var(--text-primary);
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .header-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 5%;
+            background: rgba(3, 7, 18, 0.4);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .brand-title {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(to right, #fb7185, var(--neon-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        }
+
+        .nav-btn {
+            color: var(--text-primary);
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 8px 18px;
+            border-radius: 99px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover { background: var(--text-primary); color: var(--bg-main); }
+
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 25px;
+        }
+
+        .paper-surface {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 25px 55px rgba(0,0,0,0.5);
+        }
+
+        .paper-tag {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #fb7185;
+            background: rgba(251, 113, 133, 0.1);
+            padding: 4px 12px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        h1 { font-size: 28px; font-weight: 700; margin: 0 0 15px 0; letter-spacing: -0.5px; }
+
+        .meta-strip {
+            display: flex;
+            gap: 20px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        .meta-strip span i { color: #fb7185; margin-right: 6px; }
+
+        p { line-height: 1.7; font-size: 15px; color: #d1d5db; margin-bottom: 20px; }
+
+        .highlight-box {
+            background: rgba(255,255,255,0.02);
+            border-left: 4px solid var(--neon-purple);
+            padding: 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 25px 0;
+            font-style: italic;
+            color: #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header-nav">
+        <div class="brand-title"><i class="fa-solid fa-graduation-cap"></i> Research Validation Stack</div>
+        <a href="/dashboard" class="nav-btn"><i class="fa-solid fa-arrow-left"></i> Dashboard</a>
+    </header>
+
+    <main class="container">
+        <article class="paper-surface">
+            <span class="paper-tag">Technical Whitepaper Baseline</span>
+            <h1>Hybrid Deep Convolutional Classification Framework for Cloud Diagnostics</h1>
+            
+            <div class="meta-strip">
+                <span><i class="fa-solid fa-user-shield"></i> Core Engine: MedAI-v4</span>
+                <span><i class="fa-solid fa-database"></i> Registry Matrix: SQLite Buffer</span>
+            </div>
+
+            <p>
+                This technical document outlines the validation architecture utilized across local operational parameters. The core algorithm employs a high-performance feature mapping sequence capable of isolating minor densitometric fluctuations within complex pixel maps.
+            </p>
+
+            <div class="highlight-box">
+                "By decoupling convolutional layer dependencies and mapping multi-scale vector outputs to a central database ledger, the system ensures real-time operational persistence without performance degradation."
+            </div>
+
+            <p>
+                Database validation records confirm an operational throughput boundary capable of continuous telemetry ingestion. All processing pipelines maintain strict integrity alignments verified via security hashes.
+            </p>
+        </article>
+    </main>
+
+</body>
+</html>

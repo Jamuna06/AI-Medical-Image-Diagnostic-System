@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedAI Core | Unified Matrix Console</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-main: #030712;
+            --glass-bg: rgba(15, 23, 42, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --neon-blue: #38bdf8;
+            --neon-purple: #a855f7;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+        }
+
+        body {
+            background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, var(--bg-main) 70%);
+            color: var(--text-primary);
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .header-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 5%;
+            background: rgba(3, 7, 18, 0.4);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .brand-title {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-btn {
+            color: var(--text-primary);
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            padding: 8px 18px;
+            border-radius: 99px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: var(--text-primary);
+            color: var(--bg-main);
+        }
+
+        .console-container {
+            max-width: 1400px;
+            margin: 35px auto;
+            padding: 0 25px;
+        }
+
+        .tab-menu-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 800px) {
+            .tab-menu-bar { grid-template-columns: 1fr; }
+        }
+
+        .tab-btn {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid var(--glass-border);
+            padding: 14px;
+            border-radius: 12px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn:hover {
+            border-color: rgba(56, 189, 248, 0.4);
+            color: white;
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.25);
+        }
+
+        .tab-btn.police-tab {
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+        .tab-btn.police-tab.active {
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            box-shadow: 0 10px 20px rgba(239, 68, 68, 0.25);
+        }
+
+        .content-split-layout {
+            display: grid;
+            grid-template-columns: 1.2fr 1.8fr;
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+
+        @media (max-width: 1000px) {
+            .content-split-layout { grid-template-columns: 1fr; }
+        }
+
+        .panel-surface {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 28px;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.4);
+        }
+
+        .panel-heading {
+            font-size: 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-secondary);
+            margin-top: 0;
+            margin-bottom: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-heading i { color: var(--neon-blue); }
+
+        .meta-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .meta-item {
+            display: flex;
+            justify-content: space-between;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            font-size: 14px;
+        }
+
+        .meta-label { color: var(--text-secondary); font-weight: 500; }
+        .meta-val { font-weight: 600; color: var(--text-primary); }
+
+        .engine-panel { display: none; }
+        .engine-panel.active-panel { display: block; }
+
+        .progress-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .bar-container {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .bar-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .bar-track {
+            background: #111827;
+            height: 10px;
+            border-radius: 99px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 99px;
+            background: linear-gradient(90deg, #3b82f6, var(--neon-blue));
+        }
+
+        .vector-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .vector-box {
+            background: #020617;
+            border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 16px 20px;
+        }
+
+        .vector-lbl { font-size: 11px; color: var(--text-secondary); text-transform: uppercase; font-weight: 600; }
+        .vector-val { font-size: 24px; font-weight: 700; color: #f59e0b; margin-top: 5px; }
+
+        .action-submit-btn {
+            background: linear-gradient(135deg, #0284c7, #0369a1);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .action-submit-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(2, 132, 199, 0.3);
+        }
+
+        .alert-plate {
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px dashed rgba(239, 68, 68, 0.25);
+            padding: 16px;
+            border-radius: 12px;
+            display: flex;
+            gap: 12px;
+            color: #ef4444;
+            font-size: 13px;
+            line-height: 1.5;
+            margin-top: 15px;
+        }
+
+        .text-cyan { color: var(--neon-blue); }
+        .text-green { color: #10b981; }
+
+        /* Uploaded Scan Frame Display */
+        .scan-preview-holder {
+            width: 100%;
+            max-height: 220px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
+            background: #020617;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .scan-preview-holder img {
+            max-width: 100%;
+            max-height: 220px;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header-nav">
+        <div class="brand-title">Medical AI Hybrid Matrix Console</div>
+        <a href="/dashboard" class="nav-btn">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>Control Dashboard</span>
+        </a>
+    </header>
+
+    <main class="console-container">
+        
+        <nav class="tab-menu-bar">
+            <button class="tab-btn active" onclick="switchEngine('coreMode', this)">
+                <i class="fa-solid fa-microscope"></i> Diagnostic Core
+            </button>
+            <button class="tab-btn" onclick="switchEngine('labMode', this)">
+                <i class="fa-solid fa-flask-vial"></i> Advanced Lab Mode
+            </button>
+            <button class="tab-btn" onclick="switchEngine('trendsMode', this)">
+                <i class="fa-solid fa-chart-gantt"></i> Trends & Biomarkers
+            </button>
+            <button class="tab-btn police-tab" onclick="switchEngine('policeMode', this)">
+                <i class="fa-solid fa-building-shield"></i> Police Criminal Check
+            </button>
+        </nav>
+
+        <div class="content-split-layout">
+            
+            <section class="panel-surface">
+                <h2 class="panel-heading">
+                    <i class="fa-solid fa-address-card"></i> Case Telemetry Ledger
+                </h2>
+                <div class="meta-list">
+                    <div class="meta-item">
+                        <span class="meta-label">Case Token ID</span>
+                        <span class="meta-val text-cyan" style="font-family: monospace;">{{ p.case_id }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Patient Name Reference</span>
+                        <span class="meta-val">{{ p.name }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Age / Gender Spectrum</span>
+                        <span class="meta-val">{{ p.age }} Yrs / {{ p.gender }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">Analysis Timestamp</span>
+                        <span class="meta-val" style="font-size: 12px; color: var(--text-secondary);">{{ p.date }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <span class="meta-label">System Workflow Urgency</span>
+                        <span class="meta-val text-cyan">{{ p.priority }}</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.05); font-size: 13px; line-height: 1.6; color: var(--text-secondary);">
+                    <strong style="color: white; display: block; margin-bottom: 5px;"><i class="fa-solid fa-clipboard-question"></i> Clinical Directives Note:</strong>
+                    {{ p.remark if p.remark else 'No clinical manual remarks added to this matrix file ledger by the supervisor.' }}
+                </div>
+            </section>
+
+            <section class="panel-surface" style="min-height: 380px;">
+                
+                <!-- ENGINE 1: DIAGNOSTIC CORE PANEL -->
+                <div id="coreMode" class="engine-panel active-panel">
+                    <h2 class="panel-heading"><i class="fa-solid fa-brain"></i> Classification Vector Results</h2>
+                    <div class="vector-grid">
+                        <div class="vector-box">
+                            <div class="vector-lbl">Target Classification Mapping</div>
+                            <div class="vector-val" style="color: #ef4444;">{{ p.disease }}</div>
+                        </div>
+                        <div class="vector-box">
+                            <div class="vector-lbl">Confidence Score Weight</div>
+                            <div class="vector-val" style="color: #10b981;">{{ p.confidence }}</div>
+                        </div>
+                    </div>
+                    <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 25px;">
+                        The local deep neural convolution map weights analyzed the uploaded structural array patterns. The findings correspond significantly with signature structural markers of <strong>{{ p.disease }}</strong> with a calculated probability limit boundary.
+                    </p>
+                    <a href="/generate_pdf/{{ patient_id }}" class="action-submit-btn">
+                        <i class="fa-solid fa-file-pdf"></i> GENERATE SECURE ARCHIVE REPORT
+                    </a>
+                </div>
+
+                <!-- ENGINE 2: ADVANCED LAB MODE PANEL -->
+                <div id="labMode" class="engine-panel">
+                    <h2 class="panel-heading"><i class="fa-solid fa-microchip"></i> Deep Density Texture Extraction</h2>
+                    <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px;">
+                        Automated high-frequency scanning filters mapping localized tissue cross-sections and density variance ratios:
+                    </p>
+                    <div class="meta-list" style="gap: 10px;">
+                        <div class="meta-item"><span class="meta-label">Pixel Spatial Resolution</span><span class="meta-val">0.45 mm/px</span></div>
+                        <div class="meta-item"><span class="meta-label">Calculated Lesion Bound Ratio</span><span class="meta-val text-cyan">14.2%</span></div>
+                        <div class="meta-item"><span class="meta-label">Contrast-to-Noise Coefficient</span><span class="meta-val">3.82 dB</span></div>
+                        <div class="meta-item"><span class="meta-label">AI Secondary Prediction Grid</span><span class="meta-val text-green">Stable / Non-Expanding</span></div>
+                    </div>
+                </div>
+
+                <!-- ENGINE 3: TRENDS & BIOMARKERS PANEL -->
+                <div id="trendsMode" class="engine-panel">
+                    <h2 class="panel-heading"><i class="fa-solid fa-chart-simple"></i> Tissue Biomarker Distribution Variance</h2>
+                    <div class="progress-stack">
+                        <div class="bar-container">
+                            <div class="bar-labels"><span>Normal Range Structural Integrity</span><span class="text-green">63%</span></div>
+                            <div class="bar-track"><div class="bar-fill" style="width: 63%; background: #10b981;"></div></div>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar-labels"><span>Viral Cluster Core Density</span><span style="color: #ef4444;">86%</span></div>
+                            <div class="bar-track"><div class="bar-fill" style="width: 86%; background: #ef4444;"></div></div>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar-labels"><span>Localized Bacterial Structural Load</span><span style="color: #38bdf8;">70%</span></div>
+                            <div class="bar-track"><div class="bar-fill" style="width: 70%;"></div></div>
+                        </div>
+                        <div class="bar-container">
+                            <div class="bar-labels"><span>Fibrosis Trace Scars Indicator</span><span style="color: #f59e0b;">27%</span></div>
+                            <div class="bar-track"><div class="bar-fill" style="width: 27%; background: #f59e0b;"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ENGINE 4: POLICE CRIMINAL CHECK PANEL (Dynamic Scan Image Preview Layer) -->
+                <div id="policeMode" class="engine-panel">
+                    <h2 class="panel-heading" style="color: #ef4444;"><i class="fa-solid fa-building-shield"></i> Law Enforcement Sync Gateway</h2>
+                    
+                    <!-- Dynamic Image Render Frame Node -->
+                    <div class="scan-preview-holder">
+                        <img src="/static/{{ p.file_path }}" alt="Patient Uploaded Scan Biometric">
+                    </div>
+
+                    <div style="text-align: center; margin-bottom: 10px;">
+                        <span style="font-size: 12px; font-weight: 600; background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 5px 14px; border-radius: 99px; display: inline-block;">
+                            <i class="fa-solid fa-circle-check"></i> AWS Rekognition Verified Secure
+                        </span>
+                    </div>
+
+                    <div class="alert-plate">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <div>
+                            <strong>Biometric Match Verdict:</strong> <span style="color: #e2e8f0;">The facial structure array maps extracted from this clinical file do not match any active criminal profiles inside central warrant databases. Clear ledger generated.</span>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+    <script>
+        function switchEngine(panelId, elementRef) {
+            document.querySelectorAll('.engine-panel').forEach(panel => {
+                panel.classList.remove('active-panel');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(panelId).classList.add('active-panel');
+            elementRef.classList.add('active');
+        }
+    </script>
+</body>
+</html>

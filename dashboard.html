@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedAI Core | Enterprise Control Engine</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-main: #030712;
+            --glass-bg: rgba(15, 23, 42, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --neon-blue: #38bdf8;
+            --neon-purple: #a855f7;
+            --neon-pink: #f43f5e;
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            
+            --critical-bg: rgba(244, 63, 94, 0.15);
+            --critical-text: #f43f5e;
+            --urgent-bg: rgba(245, 158, 11, 0.15);
+            --urgent-text: #f59e0b;
+            --routine-bg: rgba(16, 185, 129, 0.15);
+            --routine-text: #10b981;
+        }
+
+        body {
+            background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, var(--bg-main) 70%);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .header-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 5%;
+            background: rgba(3, 7, 18, 0.4);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(to right, var(--neon-blue), var(--neon-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--bg-main);
+            text-decoration: none;
+            background: var(--text-primary);
+            padding: 10px 22px;
+            border-radius: 99px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(255,255,255,0.1);
+        }
+
+        .dashboard-container {
+            max-width: 1440px;
+            margin: 40px auto;
+            padding: 0 35px;
+            display: flex;
+            flex-direction: column;
+            gap: 35px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+        }
+
+        .metric-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+
+        .metric-info h3 {
+            margin: 0;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+        }
+
+        .metric-value { margin: 10px 0 2px 0; font-size: 34px; font-weight: 800; }
+        .metric-card.accuracy .metric-value { color: #10b981; }
+        .metric-card.latency .metric-value { color: var(--neon-blue); }
+        .metric-card.load .metric-value { color: #f59e0b; }
+        .metric-card.police-sync .metric-value { color: var(--neon-pink); }
+
+        .split-layout {
+            display: grid;
+            grid-template-columns: 2.1fr 0.9fr;
+            gap: 30px;
+        }
+
+        .content-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.5);
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 0 0 25px 0;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .panel-title i { color: var(--neon-blue); }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            padding: 14px 18px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        td {
+            padding: 18px;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            color: #e5e7eb;
+        }
+
+        .case-link {
+            color: var(--neon-blue);
+            text-decoration: none;
+            font-weight: 700;
+            font-family: monospace;
+            background: rgba(56, 189, 248, 0.08);
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid rgba(56, 189, 248, 0.15);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .badge.critical { background: var(--critical-bg); color: var(--critical-text); }
+        .badge.urgent { background: var(--urgent-bg); color: var(--urgent-text); }
+        .badge.routine { background: var(--routine-bg); color: var(--routine-text); }
+        .badge.healthy { background: var(--routine-bg); color: var(--routine-text); }
+
+        .action-link {
+            color: #a855f7;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .terminal-shell {
+            background: #020617;
+            border-radius: 16px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 12px;
+            line-height: 1.7;
+            color: #38bdf8;
+            height: 415px;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            margin-bottom: 12px;
+            border-bottom: 1px dashed rgba(255,255,255,0.03);
+            padding-bottom: 8px;
+        }
+
+        .log-time {
+            color: var(--text-secondary);
+            margin-right: 8px;
+        }
+
+        .log-txt { color: #f1f5f9; }
+        .log-success { color: #10b981; font-weight: bold; }
+        .log-secure { color: #38bdf8; font-weight: bold; }
+        .log-idle { color: #f59e0b; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <header class="header-nav">
+        <div class="brand-logo">
+            <i class="fa-solid fa-server"></i> <span>MedAI Core Enterprise</span>
+        </div>
+        <a href="/" class="nav-btn">
+            <i class="fa-solid fa-square-plus"></i> <span>New Clinical Case</span>
+        </a>
+    </header>
+
+    <main class="dashboard-container">
+        
+        <section class="metrics-grid">
+            <div class="metric-card accuracy">
+                <div class="metric-info">
+                    <h3>Inference Accuracy Base</h3>
+                    <p class="metric-value">{{ metrics.accuracy }}</p>
+                </div>
+                <i class="fa-solid fa-circle-nodes" style="opacity:0.2; font-size:30px;"></i>
+            </div>
+            <div class="metric-card latency">
+                <div class="metric-info">
+                    <h3>Model Response Speed</h3>
+                    <p class="metric-value">{{ metrics.latency }}</p>
+                </div>
+                <i class="fa-solid fa-gauge-high" style="opacity:0.2; font-size:30px;"></i>
+            </div>
+            <div class="metric-card load">
+                <div class="metric-info">
+                    <h3>Node Compute Burden</h3>
+                    <p class="metric-value">{{ metrics.cpu }}%</p>
+                </div>
+                <i class="fa-solid fa-cpu" style="opacity:0.2; font-size:30px;"></i>
+            </div>
+            <div class="metric-card police-sync">
+                <div class="metric-info">
+                    <h3>Law Warrant Audits</h3>
+                    <p class="metric-value">Active</p>
+                </div>
+                <i class="fa-solid fa-building-shield" style="opacity:0.2; font-size:30px;"></i>
+            </div>
+        </section>
+
+        <section class="split-layout">
+            
+            <div class="content-panel">
+                <h2 class="panel-title">
+                    <i class="fa-solid fa-folder-tree"></i>
+                    <span>Historical Clinical Analytics Transaction Ledger</span>
+                </h2>
+                
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tracking Matrix Token ID</th>
+                                <th>Subject Demographic Name</th>
+                                <th>Model Classification Target Mapping</th>
+                                <th>Workflow Priority</th>
+                                <th>Action Panel</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in history %}
+                            <tr>
+                                <td>
+                                    <a href="/result/{{ row.id }}" class="case-link">{{ row.case_id }}</a>
+                                </td>
+                                <td>
+                                    <strong style="color: #f1f5f9;">{{ row.name }}</strong>
+                                    <div style="font-size: 12px; color: var(--text-secondary);">Age: {{ row.age }} | {{ row.gender }}</div>
+                                </td>
+                                <td>
+                                    <span style="font-weight: 600;">{{ row.disease }}</span>
+                                    <div style="font-size: 12px; color: var(--neon-blue);">Severity: {{ row.severity }} ({{ row.confidence }})</div>
+                                </td>
+                                <td>
+                                    <span class="badge {{ row.priority | lower }}">{{ row.priority }}</span>
+                                </td>
+                                <td>
+                                    <a href="/result/{{ row.id }}" class="action-link">
+                                        <span>Console Maps</span>
+                                        <i class="fa-solid fa-angle-right"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" style="text-align: center; color: var(--text-secondary); padding: 40px;">
+                                    No dynamic analysis transaction logs loaded.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="content-panel">
+                <h2 class="panel-title">
+                    <i class="fa-solid fa-terminal" style="color: var(--neon-pink);"></i>
+                    <span>Core Audit Logs</span>
+                </h2>
+                
+                <div class="terminal-shell">
+                    {% for log in logs %}
+                    <div class="log-entry">
+                        <span class="log-time">[{{ log.timestamp.split(' ')[1] if ' ' in log.timestamp else log.timestamp }}]</span>
+                        <span class="log-txt">> {{ log.action }}</span>
+                    </div>
+                    {% endfor %}
+
+                    <div class="log-entry">
+                        <span class="log-time">[11:07:20]</span>
+                        <span class="log-txt">> Diagnostic core weights tensor maps memory optimization... <span class="log-success">SUCCESS</span></span>
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-time">[11:05:01]</span>
+                        <span class="log-txt">> Ingestion trigger alert loop active monitoring nodes... <span class="log-idle">IDLE</span></span>
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-time">[11:03:42]</span>
+                        <span class="log-txt">> AWS Rekognition security signature mapping pool validated... <span class="log-secure">SECURE</span></span>
+                    </div>
+                    <div class="log-entry">
+                        <span class="log-time">[11:02:14]</span>
+                        <span class="log-txt">> SQLite Engine connection status checkpoint... <span class="log-success">ONLINE</span></span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+</body>
+</html>
