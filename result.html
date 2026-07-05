@@ -411,7 +411,8 @@
                     
                     <!-- Dynamic Image Render Frame Node -->
                     <div class="scan-preview-holder">
-                        <img src="/static/{{ p.file_path }}" alt="Patient Uploaded Scan Biometric">
+                <img src="{{ url_for('uploaded_file', filename=p.file_path) }}" alt="Patient Uploaded Scan Biometric">
+                        <!-- <img src="/static/{{ p.file_path }}" alt="Patient Uploaded Scan Biometric"> -->
                     </div>
 
                     <div style="text-align: center; margin-bottom: 10px;">
